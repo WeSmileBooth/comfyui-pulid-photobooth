@@ -2,24 +2,24 @@ from modal import Image
 import pathlib
 
 from .models import download_checkpoints, download_additional_models
-from .nodes import download_nodes
+from .nodes import download_nodes, create_aq_gemini_node
 
-# Use latest ComfyUI commit with FLUX support
-commit_sha = "latest"  # Use latest for FLUX support
-gpu = "h100"  # H100 recommended for FLUX
+# Use specific ComfyUI commit that works well with FLUX
+commit_sha = "2a02546e2085487d34920e5b5c9b367918531f32"
+gpu = "L40S"  # L40S is more cost-effective than H100 for most workloads
 
 # Define the image with FLUX-specific configuration
 image = (
     Image.from_registry("nvidia/cuda:12.1.1-devel-ubuntu22.04", add_python="3.11")
     .apt_install(
         "git", "git-lfs", "libgl1-mesa-glx", "libglib2.0-0", 
-        "unzip", "clang", "wget", "curl", "libgoogle-perftools4"
+        "unzip", "clang", "wget", "curl", "libgoogle-perftools4",
+        "libsm6", "libxext6", "libxrender-dev", "libgl1-mesa-dev"
     )
     .run_commands(
         "cd /root && git init .",
         "cd /root && git remote add --fetch origin https://github.com/comfyanonymous/ComfyUI",
-        "cd /root && git checkout main",  # Use latest for FLUX support
-        "cd /root && git pull origin main",
+        f"cd /root && git checkout {commit_sha}",
     )
     # Install PyTorch with CUDA 12.1
     .run_commands(
@@ -46,9 +46,13 @@ image = (
         "google-genai",
         "pillow",
         "ultralytics",
+        "matplotlib",
+        "scikit-image",
     )
     # Download custom nodes
     .run_function(download_nodes, gpu=gpu)
+    # Create custom AQ_Gemini node
+    .run_function(create_aq_gemini_node)
     # Download models
     .run_function(download_checkpoints)
     .run_function(download_additional_models)

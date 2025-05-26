@@ -1,7 +1,7 @@
 {
   "108": {
     "inputs": {
-      "vae_name": "flux/ae.safetensors"
+      "vae_name": "ae.safetensors"
     },
     "class_type": "VAELoader",
     "_meta": {
@@ -738,7 +738,7 @@
   },
   "442": {
     "inputs": {
-      "unet_name": "flux/flux1-dev-fp8.safetensors",
+      "unet_name": "flux1-dev-fp8.safetensors",
       "weight_dtype": "fp8_e4m3fn"
     },
     "class_type": "UNETLoader",

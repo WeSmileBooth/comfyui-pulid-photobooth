@@ -87,22 +87,27 @@ class ComfyUI:
             'iso': now_utc.isoformat()
         }
 
+       # In the infer method, update the workflow preparation section:
+
         # Prepare workflow
         workflow = copy.deepcopy(self.workflow_json)
-        
-        # Update key workflow nodes based on your Latest_WeSmile_Workflow.json
-        # You'll need to identify which nodes need to be updated with input data
+
+        # Update key workflow nodes
         workflow["111"]["inputs"]["noise_seed"] = random.randint(1, 2**64)
         workflow["232"]["inputs"]["image"] = input.session_id
-        
-        # Set Gemini API key if using AQ_Gemini nodes
+
+        # Set Gemini API key in the AQ_Gemini node
         if "425" in workflow and "gemini_api_key" in workflow["425"]["inputs"]:
-            workflow["425"]["inputs"]["gemini_api_key"] = os.environ.get("GEMINI_API_KEY", "")
-        
-        # The prompt will be processed by your Gemini node in the workflow
-        # Update the text concatenation node that feeds into Gemini
+            workflow["425"]["inputs"]["gemini_api_key"] = os.environ.get("GEMINI_API_KEY", "AIzaSyARct3pqv96HarjoPdzlr91bcRkIoxM6hw")
+
+        # Update the text input that feeds into Gemini
         if "378" in workflow:
             workflow["378"]["inputs"]["text"] = f"people. {input.prompt}"
+
+        # Monitor the correct output node (175 is VAEDecode in your workflow)
+        # In the WebSocket monitoring section, change:
+        if current_node == "175":  # VAEDecode node
+            images_output = out[8:]
 
         # Submit workflow
         data = json.dumps({"prompt": workflow, "client_id": input.session_id}).encode("utf-8")
