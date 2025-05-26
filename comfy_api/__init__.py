@@ -30,7 +30,7 @@ with image.imports():
     timeout=60 * 5,  # Increased timeout for FLUX
     secrets=[
         modal.Secret.from_name("googlecloud-secret"),
-        modal.Secret.from_name("gemini-secret")  # Add Gemini API key
+        modal.Secret.from_name("gemini-secret") 
     ],
 )
 class ComfyUI:
@@ -189,7 +189,6 @@ class ComfyUI:
         result = base64.b64encode(images_output).decode()
         return f"data:image/png;base64,{result}"
 
-# Rest of the API remains the same...
 @app.function(
     gpu=False,
     image=image,

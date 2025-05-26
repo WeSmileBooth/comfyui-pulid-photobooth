@@ -6,7 +6,7 @@ from .nodes import download_nodes, create_aq_gemini_node
 
 # Use specific ComfyUI commit that works well with FLUX
 commit_sha = "2a02546e2085487d34920e5b5c9b367918531f32"
-gpu = "L40S"  # L40S is more cost-effective than H100 for most workloads
+gpu = "h100" 
 
 # Define the image with FLUX-specific configuration
 image = (
