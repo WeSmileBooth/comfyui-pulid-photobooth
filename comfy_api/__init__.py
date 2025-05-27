@@ -29,7 +29,7 @@ with image.imports():
     container_idle_timeout=60 * 10,
     timeout=60 * 5,  # Increased timeout for FLUX
     secrets=[
-        modal.Secret.from_name("googlecloud-secret"),
+        modal.Secret.from_name("firebase-secret"),  
         modal.Secret.from_name("gemini-secret") 
     ],
 )
@@ -87,8 +87,6 @@ class ComfyUI:
             'iso': now_utc.isoformat()
         }
 
-       # In the infer method, update the workflow preparation section:
-
         # Prepare workflow
         workflow = copy.deepcopy(self.workflow_json)
 
@@ -103,11 +101,6 @@ class ComfyUI:
         # Update the text input that feeds into Gemini
         if "378" in workflow:
             workflow["378"]["inputs"]["text"] = f"people. {input.prompt}"
-
-        # Monitor the correct output node (175 is VAEDecode in your workflow)
-        # In the WebSocket monitoring section, change:
-        if current_node == "175":  # VAEDecode node
-            images_output = out[8:]
 
         # Submit workflow
         data = json.dumps({"prompt": workflow, "client_id": input.session_id}).encode("utf-8")
@@ -159,14 +152,14 @@ class ComfyUI:
                 elif message["type"] == "progress":
                     data = message["data"]
                     if (data.get("prompt_id") == prompt_id and 
-                        data["node"] == "236"):  # SamplerCustomAdvanced node
+                        data["node"] == "236"): 
                         doc_ref.update({
                             "progress": data["value"], 
                             "status": "pending"
                         })
             else:
                 # Check for output from VAEDecode node (175 in your workflow)
-                if current_node == "175":
+                if current_node == "175":  # VAEDecode node
                     images_output = out[8:]
 
         # Save result
@@ -196,7 +189,7 @@ class ComfyUI:
     timeout=60 * 15,
     container_idle_timeout=60 * 15,
     secrets=[
-        modal.Secret.from_name("googlecloud-secret"),
+        modal.Secret.from_name("firebase-secret"),
         modal.Secret.from_name("gemini-secret")
     ],
 )

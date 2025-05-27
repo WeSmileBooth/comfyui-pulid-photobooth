@@ -2,11 +2,11 @@ from modal import Image
 import pathlib
 
 from .models import download_checkpoints, download_additional_models
-from .nodes import download_nodes, create_aq_gemini_node
+from .nodes import download_nodes 
 
 # Use specific ComfyUI commit that works well with FLUX
 commit_sha = "2a02546e2085487d34920e5b5c9b367918531f32"
-gpu = "h100" 
+gpu = "L40S"  # Start with L40S, upgrade to H100 if needed
 
 # Define the image with FLUX-specific configuration
 image = (
@@ -51,8 +51,6 @@ image = (
     )
     # Download custom nodes
     .run_function(download_nodes, gpu=gpu)
-    # Create custom AQ_Gemini node
-    .run_function(create_aq_gemini_node)
     # Download models
     .run_function(download_checkpoints)
     .run_function(download_additional_models)
